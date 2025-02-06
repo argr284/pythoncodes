@@ -1,0 +1,78 @@
+def classify_category(row):
+    if row['sales'] > 200:
+        if row['profit'] > 50:
+            return "High Sales & High Profit"
+        else:
+            return "High Sales & Low Profit"
+    else:
+        if row['profit'] > 50:
+            return "Low Sales & High Profit"
+        else:
+            return "Low Sales & Low Profit"
+
+df['category_label'] = df.apply(classify_category, axis=1)
+print(df)
+
+=================
+
+import pandas as pd
+import numpy as np
+
+# Example DataFrame
+df = pd.DataFrame({
+    'sales': [250, 300, 180, 100, 400, 90],
+    'profit': [60, 40, 70, 30, 20, 50]
+})
+
+# Define conditions
+conditions = [
+    (df['sales'] > 200) & (df['profit'] > 50),  # High Sales & High Profit
+    (df['sales'] > 200) & (df['profit'] <= 50), # High Sales & Low Profit
+    (df['sales'] <= 200) & (df['profit'] > 50), # Low Sales & High Profit
+    (df['sales'] <= 200) & (df['profit'] <= 50) # Low Sales & Low Profit
+]
+
+# Define corresponding values
+choices = [
+    "High Sales & High Profit",
+    "High Sales & Low Profit",
+    "Low Sales & High Profit",
+    "Low Sales & Low Profit"
+]
+
+# Apply conditions
+df['category_label'] = np.select(conditions, choices)
+
+print(df)
+
+======================
+case when usign where and groupby
+
+import pandas as pd
+
+# Example DataFrame
+df = pd.DataFrame({
+    'category': ['A', 'A', 'B', 'B', 'A', 'B', 'A', 'B'],
+    'region': ['North', 'South', 'North', 'South', 'North', 'South', 'North', 'North'],
+    'sales': [100, 200, 150, 300, 250, 100, 50, 90],
+    'profit': [40, 60, 70, 30, 80, 50, 20, 55]
+})
+
+# Creating new conditional columns (like CASE WHEN)
+df['high_sales_profit'] = df['sales'].where((df['sales'] > 100) & (df['profit'] > 50), 0)
+df['low_sales_profit'] = df['sales'].where((df['sales'] <= 100) & (df['profit'] <= 50), 0)
+
+# GROUP BY category, region and SUM
+result = df.groupby(['category', 'region'])[['high_sales_profit', 'low_sales_profit']].sum().reset_index()
+
+print(result)
+
+
+==================
+
+Equivalent in pandas:
+
+SUM(CASE WHEN col1 > X AND col2 < Y THEN val ELSE 0 END) GROUP BY col3, col4	
+
+
+df['new_col'] = df['val'].where((df['col1'] > X) & (df['col2'] < Y), 0) then df.groupby(['col3', 'col4'])[['new_col']].sum().reset_index()
