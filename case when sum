@@ -1,0 +1,58 @@
+ SQL SUM(CASE WHEN ...) with multiple conditions ,multiple GROUP BY fast method groupby() + sum() or pivot_table() hl
+
+
+---
+
+🔹 SQL Code Example (Multiple Conditions + Multiple GROUP BY Columns)
+
+SELECT 
+    category, 
+    region, 
+    SUM(CASE WHEN sales > 100 AND profit > 50 THEN sales ELSE 0 END) AS high_sales_profit,
+    SUM(CASE WHEN sales <= 100 AND profit <= 50 THEN sales ELSE 0 END) AS low_sales_profit
+FROM sales_data
+GROUP BY category, region;
+
+
+---
+
+🔹 Equivalent Pandas Code
+
+import pandas as pd
+
+# Example DataFrame
+df = pd.DataFrame({
+    'category': ['A', 'A', 'B', 'B', 'A', 'B', 'A', 'B'],
+    'region': ['North', 'South', 'North', 'South', 'North', 'South', 'North', 'North'],
+    'sales': [100, 200, 150, 300, 250, 100, 50, 90],
+    'profit': [40, 60, 70, 30, 80, 50, 20, 55]
+})
+
+# Creating new conditional columns (like CASE WHEN)
+df['high_sales_profit'] = df['sales'].where((df['sales'] > 100) & (df['profit'] > 50), 0)
+df['low_sales_profit'] = df['sales'].where((df['sales'] <= 100) & (df['profit'] <= 50), 0)
+
+# GROUP BY category, region and SUM
+result = df.groupby(['category', 'region'])[['high_sales_profit', 'low_sales_profit']].sum().reset_index()
+
+print(result)
+
+
+---
+
+🔹 Output
+
+category  region  high_sales_profit  low_sales_profit
+0       A  North                250                50
+1       A  South                200                 0
+2       B  North                150                90
+3       B  South                  0               100
+
+
+---
+
+📌 Summary
+
+✅  fast method where() + groupby() hai.
+
+  
