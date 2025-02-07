@@ -1,0 +1,73 @@
+If you have multiple conditions for a single choice in numpy.select(), you can use logical AND (&) or logical OR (|).
+
+
+---
+
+✅ Example: Multiple Conditions for One Choice in numpy.select()
+
+Scenario:
+
+We have a DataFrame with age (numeric) and status (character).
+
+If age > 60 OR status == "retired" → "Senior Citizen"
+
+If age > 30 AND status == "employed" → "Working Adult"
+
+Otherwise → "Other"
+
+
+
+---
+
+🔹 Pandas Code Using numpy.select()
+
+import pandas as pd
+import numpy as np
+
+# Sample DataFrame
+df = pd.DataFrame({'age': [65, 40, 25, 70, 30, 50], 
+                   'status': ['retired', 'employed', 'student', 'unemployed', 'employed', 'retired']})
+
+# Define conditions with multiple checks
+conditions = [
+    (df['age'] > 60) | (df['status'] == "retired"),  # Senior Citizen
+    (df['age'] > 30) & (df['status'] == "employed")  # Working Adult
+]
+
+# Define corresponding values
+choices = ["Senior Citizen", "Working Adult"]
+
+# Apply conditions
+df['category'] = np.select(conditions, choices, default="Other")
+
+print(df)
+
+
+---
+
+🔹 Output:
+
+age      status        category
+0   65    retired  Senior Citizen
+1   40   employed  Working Adult
+2   25    student          Other
+3   70  unemployed  Senior Citizen
+4   30   employed          Other
+5   50    retired  Senior Citizen
+
+
+---
+
+📌 Key Points:
+
+| (OR) Operator: Used to check if either condition is true.
+
+& (AND) Operator: Used to check if both conditions are true.
+
+Handles multiple conditions efficiently in a single choice.
+
+Faster than apply() because numpy.select() is vectorized.
+
+
+✅ Use numpy.select() when multiple conditions map to a single choice!
+
