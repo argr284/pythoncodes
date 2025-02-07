@@ -1,0 +1,87 @@
+In SAS, IF-ELSE IF-ELSE conditions are used to check multiple conditions sequentially. In Python (Pandas), the best way to handle this depends on the complexity of the logic:
+
+1. For simple conditions → Use np.where().
+
+
+2. For multiple conditions (like ELSE IF) → Use numpy.select().
+
+
+3. For complex row-wise logic → Use apply().
+
+
+
+
+---
+
+✅ Equivalent Python Code for SAS IF-ELSE IF-ELSE
+
+🔹 SAS Code Example
+
+data new;
+    set old;
+    if age > 60 then category = "Senior";
+    else if age > 30 then category = "Adult";
+    else if age > 18 then category = "Young Adult";
+    else category = "Teenager";
+run;
+
+
+---
+
+✅ Method 1: Using numpy.select() (Best for Multiple Conditions)
+
+import pandas as pd
+import numpy as np
+
+# Sample DataFrame
+df = pd.DataFrame({'age': [65, 40, 20, 15, 30]})
+
+# Define conditions
+conditions = [
+    df['age'] > 60,
+    df['age'] > 30,
+    df['age'] > 18
+]
+
+# Define corresponding values
+choices = ["Senior", "Adult", "Young Adult"]
+
+# Apply conditions
+df['category'] = np.select(conditions, choices, default="Teenager")
+
+print(df)
+
+
+---
+
+🔹 Output
+
+age     category
+0   65      Senior
+1   40       Adult
+2   20  Young Adult
+3   15    Teenager
+4   30       Adult
+
+
+---
+
+✅ Method 2: Using apply() (If Complex Logic Needed)
+
+def classify_age(row):
+    if row['age'] > 60:
+        return "Senior"
+    elif row['age'] > 30:
+        return "Adult"
+    elif row['age'] > 18:
+        return "Young Adult"
+    else:
+        return "Teenager"
+
+df['category'] = df.apply(classify_age, axis=1)
+print(df)
+
+📌 This method is slower than numpy.select() but useful for complex logic.
+
+✅ Use numpy.select() for performance and apply() for complex row-wise logic.
+
