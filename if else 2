@@ -1,0 +1,33 @@
+Here’s how you can convert IF-ELSE conditions from SAS to Python:
+
+SAS Code Example:
+
+DATA new_dataset;
+    SET old_dataset;
+    IF age < 18 THEN category = "Minor";
+    ELSE IF age >= 18 AND age < 60 THEN category = "Adult";
+    ELSE category = "Senior";
+RUN;
+
+Equivalent Python Code (Using Pandas):
+
+import pandas as pd
+
+# Sample DataFrame
+data = {'age': [15, 25, 65]}
+df = pd.DataFrame(data)
+
+# Apply IF-ELSE logic using apply() function
+def categorize(age):
+    if age < 18:
+        return "Minor"
+    elif 18 <= age < 60:
+        return "Adult"
+    else:
+        return "Senior"
+
+df['category'] = df['age'].apply(categorize)
+
+print(df)
+
+This will create a new column category in Python just like SAS. Let me know if you need a more complex example!
