@@ -67,3 +67,69 @@ This works perfectly for pandas Series and NumPy arrays
 
 Let me know if you want this to work row-wise with more custom logic or dynamic grouping!
 
+Great point, Gaurav! Yes — you can pass the else (default) condition while calling if_else_np() as the last argument, just like this:
+
+
+---
+
+Function Reminder
+
+import numpy as np
+
+def if_else_np(*args):
+    default = None
+    arg_len = len(args)
+    if arg_len % 2 != 0:
+        default = args[-1]
+        args = args[:-1]
+    conditions = args[::2]
+    choices = args[1::2]
+    return np.select(conditions, choices, default=default)
+
+
+---
+
+How to Pass Else (Default) Condition
+
+When calling the function:
+
+result = if_else_np(
+    condition1, choice1,
+    condition2, choice2,
+    ..., 
+    default_value  # This is the ELSE part
+)
+
+
+---
+
+Example: Age + Income with ELSE Condition
+
+import pandas as pd
+
+df = pd.DataFrame({
+    'age': [22, 45, 35, 28, 60, 15],
+    'income': [25000, 80000, 40000, 15000, 90000, 5000]
+})
+
+df['category'] = if_else_np(
+    (df['age'] < 30) & (df['income'] < 30000), "Young-LowIncome",
+    (df['age'] < 30) & (df['income'] >= 30000), "Young-HighIncome",
+    (df['age'] >= 30) & (df['income'] < 50000), "MidAge-LowIncome",
+    (df['age'] >= 30) & (df['income'] >= 50000), "MidAge-HighIncome",
+    "Unknown"  # <-- this is the ELSE case
+)
+
+print(df)
+
+
+---
+
+What Happens Here?
+
+If none of the conditions match (e.g., age or income is missing, or doesn't satisfy any condition), the last value "Unknown" is returned as the default.
+
+This works just like ELSE in SQL or %else in SAS macro logic.
+
+Let me know if you want the default to be a function or column value instead of a static value!
+
