@@ -1,0 +1,69 @@
+Yes, Gaurav, absolutely — you can pass grouped conditions involving different variables in if_else_np(). Since it uses np.select(), you can combine conditions across multiple variables using logical operators.
+
+
+---
+
+Example: Grouped Conditions with Multiple Variables
+
+Let’s say you have two variables: age and income. You want to categorize people based on both age and income together.
+
+
+---
+
+Full Example with pandas
+
+import numpy as np
+import pandas as pd
+
+def if_else_np(*args):
+    default = None
+    arg_len = len(args)
+    if arg_len % 2 != 0:
+        default = args[-1]
+        args = args[:-1]
+    conditions = args[::2]
+    choices = args[1::2]
+    return np.select(conditions, choices, default=default)
+
+# Sample DataFrame
+df = pd.DataFrame({
+    'age': [22, 45, 35, 28, 60],
+    'income': [25000, 80000, 40000, 15000, 90000]
+})
+
+# Apply grouped conditions
+df['category'] = if_else_np(
+    (df['age'] < 30) & (df['income'] < 30000), "Young-LowIncome",
+    (df['age'] < 30) & (df['income'] >= 30000), "Young-HighIncome",
+    (df['age'] >= 30) & (df['income'] < 50000), "MidAge-LowIncome",
+    (df['age'] >= 30) & (df['income'] >= 50000), "MidAge-HighIncome"
+)
+
+print(df)
+
+
+---
+
+Output
+
+age  income         category
+0   22   25000  Young-LowIncome
+1   45   80000  MidAge-HighIncome
+2   35   40000  MidAge-LowIncome
+3   28   15000  Young-LowIncome
+4   60   90000  MidAge-HighIncome
+
+
+---
+
+Key Points
+
+You can combine conditions using & (AND), | (OR), ~ (NOT)
+
+Use parentheses () around each condition
+
+This works perfectly for pandas Series and NumPy arrays
+
+
+Let me know if you want this to work row-wise with more custom logic or dynamic grouping!
+
