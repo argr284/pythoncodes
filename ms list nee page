@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+  "elmType": "a",
+  "attributes": {
+    "target": "_blank",
+    "href": "='https://[your-tenant].sharepoint.com/sites/[your-site]/Lists/[your-list-name]/DispForm.aspx?ID=' + [$ID]"
+  },
+  "style": {
+    "color": "blue",
+    "text-decoration": "underline"
+  },
+  "children": [
+    {
+      "elmType": "span",
+      "txtContent": "[$Title]"
+    }
+  ]
+}
