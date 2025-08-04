@@ -72,3 +72,47 @@ def list_objects_from_s3_path(s3_path):
 
 # Example usage
 list_objects_from_s3_path('s3://my-bucket/folder1/subfolder/')
+
+
++++
+import boto3
+
+def delete_s3_subfolder_with_confirmation(s3_path):
+    # Step 1: Clean and split S3 path
+    s3_path = s3_path.replace('s3://', '')
+    bucket, *key_parts = s3_path.split('/', 1)
+    prefix = key_parts[0] if key_parts else ''
+    
+    if not prefix.endswith('/'):
+        prefix += '/'
+
+    # Display what will be deleted
+    print(f"✅ You are about to delete everything under:\ns3://{bucket}/{prefix}")
+    confirm = input("❗Do you want to continue? (yes/no): ").strip().lower()
+
+    if confirm != 'yes':
+        print("⛔ Deletion cancelled.")
+        return
+
+    # Step 2: Connect to S3
+    s3 = boto3.client('s3')
+    paginator = s3.get_paginator('list_objects_v2')
+    pages = paginator.paginate(Bucket=bucket, Prefix=prefix)
+
+    # Step 3: Delete all listed objects
+    objects_to_delete = []
+    for page in pages:
+        for obj in page.get('Contents', []):
+            objects_to_delete.append({'Key': obj['Key']})
+
+    if objects_to_delete:
+        response = s3.delete_objects(
+            Bucket=bucket,
+            Delete={'Objects': objects_to_delete}
+        )
+        print(f"✅ Deleted {len(objects_to_delete)} objects from s3://{bucket}/{prefix}")
+    else:
+        print("⚠️ No objects found under the given path.")
+
+# Example call
+delete_s3_subfolder_with_confirmation('s3://my-bucket/folder1/subfolder/')
