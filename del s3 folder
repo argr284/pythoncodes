@@ -48,3 +48,27 @@ def list_s3_objects(bucket_name, prefix=''):
 
 # Example
 list_s3_objects('your-bucket-name')
+
+++++
+import boto3
+
+def list_objects_from_s3_path(s3_path):
+    # Remove s3://
+    s3_path = s3_path.replace('s3://', '')
+    
+    # Split into bucket and prefix
+    bucket, *key_parts = s3_path.split('/', 1)
+    prefix = key_parts[0] if key_parts else ''
+
+    s3 = boto3.client('s3')
+
+    response = s3.list_objects_v2(Bucket=bucket, Prefix=prefix)
+
+    if 'Contents' in response:
+        for obj in response['Contents']:
+            print(obj['Key'])
+    else:
+        print("No objects found.")
+
+# Example usage
+list_objects_from_s3_path('s3://my-bucket/folder1/subfolder/')
