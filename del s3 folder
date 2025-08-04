@@ -29,3 +29,22 @@ def delete_s3_folder(bucket_name, folder_prefix):
 
 # Example usage
 delete_s3_folder('your-bucket-name', 'folder-name/')
+
+
+
++++
+import boto3
+
+s3 = boto3.client('s3')
+
+def list_s3_objects(bucket_name, prefix=''):
+    response = s3.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
+
+    if 'Contents' in response:
+        for obj in response['Contents']:
+            print(obj['Key'])  # Object key (file path)
+    else:
+        print("No objects found.")
+
+# Example
+list_s3_objects('your-bucket-name')
