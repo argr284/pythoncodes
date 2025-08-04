@@ -1,0 +1,9 @@
+import pandas as pd
+
+# Sample DataFrame
+# abc = pd.read_csv('your_file.csv')  # assuming abc already exists
+
+# Apply filter and keep only selected columns
+filtered_df = abc[(abc['var1'] == 1) & (abc['var2'] == 'a')][['var1', 'var2', 'acctid']].head(10)
+
+print(filtered_df)
