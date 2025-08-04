@@ -1,0 +1,74 @@
+import pandas as pd
+
+# 🔹 Left table
+left = pd.DataFrame({
+    'id': [1, 2, 3],
+    'name': ['Gaurav', 'Amit', 'Neha']
+})
+
+# 🔹 Right table
+right = pd.DataFrame({
+    'id': [2, 3, 4],
+    'city': ['Delhi', 'Mumbai', 'Chennai']
+})
+
+# ============================================
+# 🔸 INNER JOIN: Common keys only
+inner_join = pd.merge(left, right, on='id', how='inner', indicator=True)
+print("🔸 INNER JOIN:\n", inner_join)
+
+# Output:
+#    id   name    city      _merge
+# 0   2   Amit   Delhi    both
+# 1   3   Neha   Mumbai   both
+
+# ============================================
+# 🔸 LEFT JOIN: All from left, match from right
+left_join = pd.merge(left, right, on='id', how='left', indicator=True)
+print("\n🔸 LEFT JOIN:\n", left_join)
+
+# Output:
+#    id   name    city      _merge
+# 0   1 Gaurav     NaN   left_only
+# 1   2   Amit   Delhi        both
+# 2   3   Neha  Mumbai        both
+
+# ============================================
+# 🔸 RIGHT JOIN: All from right, match from left
+right_join = pd.merge(left, right, on='id', how='right', indicator=True)
+print("\n🔸 RIGHT JOIN:\n", right_join)
+
+# Output:
+#    id   name     city     _merge
+# 0   2   Amit    Delhi       both
+# 1   3   Neha   Mumbai       both
+# 2   4    NaN  Chennai  right_only
+
+# ============================================
+# 🔸 OUTER JOIN: All keys from both tables
+outer_join = pd.merge(left, right, on='id', how='outer', indicator=True)
+print("\n🔸 OUTER JOIN:\n", outer_join)
+
+# Output:
+#    id   name     city      _merge
+# 0   1 Gaurav      NaN   left_only
+# 1   2   Amit    Delhi        both
+# 2   3   Neha   Mumbai        both
+# 3   4    NaN  Chennai  right_only
+
+# ============================================
+# 🔸 CROSS JOIN: All combinations (no key needed)
+cross_join = left.merge(right, how='cross')
+print("\n🔸 CROSS JOIN:\n", cross_join)
+
+# Output:
+#    id_x   name  id_y     city
+# 0     1 Gaurav     2    Delhi
+# 1     1 Gaurav     3   Mumbai
+# 2     1 Gaurav     4  Chennai
+# 3     2   Amit     2    Delhi
+# 4     2   Amit     3   Mumbai
+# 5     2   Amit     4  Chennai
+# 6     3   Neha     2    Delhi
+# 7     3   Neha     3   Mumbai
+# 8     3   Neha     4  Chennai
