@@ -2,26 +2,43 @@ import numpy as np
 import pandas as pd
 
 def if_else_np(df, *args):
+    # Initialize default value as None
     default = None
-    if len(args) % 2 != 0:
-        default = args[-1]
-        args = args[:-1]
 
+    # If the number of arguments is odd, the last one is the default value
+    if len(args) % 2 != 0:
+        default = args[-1]          # Assign the last item as default
+        args = args[:-1]            # Remove default from the list
+
+    # Split the arguments into conditions and choices
+    # conditions = every 0th, 2nd, 4th... argument
+    # choices = every 1st, 3rd, 5th... argument
     conditions = args[::2]
     choices = args[1::2]
 
-    cond_eval = [df.eval(cond) if isinstance(cond, str) else cond for cond in conditions]
+    # Evaluate conditions:
+    # If condition is a string (e.g., "age == 20"), evaluate it using df.eval
+    # If already a boolean Series (like df["age"] > 20), use directly
+    cond_eval = [
+        df.eval(cond) if isinstance(cond, str) else cond
+        for cond in conditions
+    ]
 
+    # Process choices:
+    # If it's a Series: keep as is
+    # If it's a string and matches a column name: use df[column]
+    # Otherwise: treat it as a static value (e.g., "Unknown")
     choice_eval = []
     for ch in choices:
         if isinstance(ch, pd.Series):
             choice_eval.append(ch)
         elif isinstance(ch, str):
             if ch in df.columns:
-                choice_eval.append(df[ch])
+                choice_eval.append(df[ch])  # use column as choice
             else:
-                choice_eval.append(ch)
+                choice_eval.append(ch)      # static string value
         else:
-            choice_eval.append(ch)
+            choice_eval.append(ch)          # numbers, etc.
 
+    # Use numpy.select to return the matched value based on condition
     return np.select(cond_eval, choice_eval, default=default)
