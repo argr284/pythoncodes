@@ -1,0 +1,28 @@
+import pandas as pd
+
+# 🔹 Left table: 'cust_id'
+left = pd.DataFrame({
+    'cust_id': [1, 2, 3],
+    'name': ['Gaurav', 'Amit', 'Neha']
+})
+
+# 🔹 Right table: 'customer_id' (diff name)
+right = pd.DataFrame({
+    'customer_id': [2, 3, 4],
+    'city': ['Delhi', 'Mumbai', 'Chennai']
+})
+
+# 🔸 Merge with different key names
+merged = pd.merge(
+    left,
+    right,
+    left_on='cust_id',       # left key
+    right_on='customer_id',  # right key
+    how='outer',
+    indicator=True           # adds _merge column
+)
+
+# 🔸 Add a flag to show match or not
+merged['match_flag'] = merged['_merge'] == 'both'
+
+print(merged)
