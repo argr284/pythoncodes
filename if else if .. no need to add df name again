@@ -2,13 +2,6 @@ import numpy as np
 import pandas as pd
 
 def if_else_np(df, *args):
-    """
-    df: pandas dataframe
-    args: alternating condition (string), choice (string literal, number, or Series)
-    last arg is optional default
-    """
-
-    # Default if odd number of args
     default = None
     if len(args) % 2 != 0:
         default = args[-1]
@@ -17,10 +10,8 @@ def if_else_np(df, *args):
     conditions = args[::2]
     choices = args[1::2]
 
-    # Evaluate conditions using df.eval()
     cond_eval = [df.eval(cond) if isinstance(cond, str) else cond for cond in conditions]
 
-    # Prepare choices
     choice_eval = []
     for ch in choices:
         if isinstance(ch, pd.Series):
@@ -29,7 +20,7 @@ def if_else_np(df, *args):
             if ch in df.columns:
                 choice_eval.append(df[ch])
             else:
-                choice_eval.append(ch)  # Treat as literal string
+                choice_eval.append(ch)
         else:
             choice_eval.append(ch)
 
