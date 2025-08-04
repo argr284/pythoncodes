@@ -1,0 +1,31 @@
+import boto3
+
+def delete_s3_folder(bucket_name, folder_prefix):
+    """
+    Deletes all objects under a given folder prefix in the specified S3 bucket.
+    
+    Args:
+        bucket_name (str): Name of the S3 bucket.
+        folder_prefix (str): Prefix (folder path) to delete, e.g., 'myfolder/'.
+    """
+    s3 = boto3.client('s3')
+    
+    # Get all objects with the prefix (folder path)
+    response = s3.list_objects_v2(Bucket=bucket_name, Prefix=folder_prefix)
+    
+    # If there are objects found under the prefix
+    if 'Contents' in response:
+        objects_to_delete = [{'Key': obj['Key']} for obj in response['Contents']]
+        
+        # Delete them
+        delete_response = s3.delete_objects(
+            Bucket=bucket_name,
+            Delete={'Objects': objects_to_delete}
+        )
+        
+        print(f"Deleted objects: {delete_response}")
+    else:
+        print("No objects found under that prefix.")
+
+# Example usage
+delete_s3_folder('your-bucket-name', 'folder-name/')
