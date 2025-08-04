@@ -1,0 +1,10 @@
+import numpy as np
+
+def if_else_np(*args):
+    default = None
+    if len(args) % 2 != 0:
+        default = args[-1]
+        args = args[:-1]
+    conditions = args[::2]
+    choices = args[1::2]
+    return np.select(conditions, choices, default=default)
