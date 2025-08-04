@@ -1,0 +1,34 @@
+import boto3
+import re
+
+def list_s3_folders_from_path(s3_path):
+    # Extract bucket and prefix using regex
+    match = re.match(r's3://([^/]+)/?(.*)', s3_path)
+    if not match:
+        raise ValueError("Invalid S3 path format. Use s3://bucket-name/folder/")
+
+    bucket = match.group(1)
+    prefix = match.group(2)
+
+    if prefix and not prefix.endswith('/'):
+        prefix += '/'
+
+    s3 = boto3.client('s3')
+
+    response = s3.list_objects_v2(
+        Bucket=bucket,
+        Prefix=prefix,
+        Delimiter='/'
+    )
+
+    folders = response.get('CommonPrefixes', [])
+    folder_list = [f['Prefix'] for f in folders]
+
+    print(f"📁 Folders under {s3_path}:")
+    for f in folder_list:
+        print(f)
+
+    return folder_list
+
+# 🔍 Example usage:
+list_s3_folders_from_path('s3://my-bucket/my-folder/')
