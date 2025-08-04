@@ -1,0 +1,18 @@
+# Define conditions
+conditions = [
+    (df['age'] < 30) & (df['income'] > 20000),     # Young & Rich
+    (df['age'] >= 60),                             # Senior
+    (df['income'].between(30000, 60000))           # Mid-Income
+]
+
+# Define corresponding choices
+choices = [
+    "Young-Rich",
+    "Senior",
+    "Mid-Income"
+]
+
+# Use status column as default (else)
+df['category'] = np.select(conditions, choices, default=df['status'])
+
+print(df)
