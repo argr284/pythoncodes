@@ -1,0 +1,40 @@
+import pandas as pd
+
+# Data
+df = pd.DataFrame({
+    'id': [2,1,2,3,1],
+    'score': [90,80,85,95,70]
+})
+# Comment: id column me 1 aur 2 duplicates hai
+# Data:
+# id  score
+# 2   90
+# 1   80
+# 2   85
+# 3   95
+# 1   70
+
+# Step 1: Duplicate rows identify karna (all duplicates, including first & last)
+df_dups = df[df.duplicated(subset='id', keep=False)]
+# Output:
+# id  score
+# 2   90
+# 1   80
+# 2   85
+# 1   70
+
+# Step 2: Non-duplicate rows
+df_unique = df[~df.duplicated(subset='id', keep=False)]
+# Output:
+# id  score
+# 3   95
+
+# Mini explanation:
+# duplicated(subset='id', keep=False) -> id ke jitne bhi duplicates hain unko True mark karta hai
+# keep=False ka matlab: first, last, sab mark hote hain duplicates
+# ~ (tilde) ka matlab invert -> jo duplicates nahi hain unko select kar rahe
+Summary inst3 style:
+
+df_dups → sirf duplicates wale rows
+
+df_unique → sirf unique rows
