@@ -1,0 +1,157 @@
+import pandas as pd
+import numpy as np
+from math import ceil, floor
+from datetime import datetime
+
+# --------------------------------------------
+# 1. DATE CONVERSION
+# --------------------------------------------
+
+# String to date
+df = pd.DataFrame({'date_str': ['2025-08-14','14/08/2025','08-14-2025']})
+# Comment: Different string formats se datetime me convert karna
+df['date1'] = pd.to_datetime(df['date_str'], format='%Y-%m-%d', errors='coerce')  # YYYY-MM-DD
+df['date2'] = pd.to_datetime(df['date_str'], format='%d/%m/%Y', errors='coerce')  # DD/MM/YYYY
+df['date3'] = pd.to_datetime(df['date_str'], format='%m-%d-%Y', errors='coerce')  # MM-DD-YYYY
+# Output:
+# date1       date2       date3
+# 2025-08-14  NaT         NaT
+# NaT         2025-08-14  NaT
+# NaT         NaT         2025-08-14
+
+# Date to string / different format
+df['date_str_fmt'] = df['date1'].dt.strftime('%d-%b-%Y')  # 14-Aug-2025
+# Output:
+# 0    14-Aug-2025
+# 1           NaT
+# 2           NaT
+
+# --------------------------------------------
+# 2. SAS SCAN function in Python
+# --------------------------------------------
+text = pd.Series(['John,Doe,25','Alice,Smith,30'])
+# SAS scan: extract 1st,2nd token
+df_scan = pd.DataFrame()
+df_scan['first_name'] = text.str.split(',').str[0]
+df_scan['last_name'] = text.str.split(',').str[1]
+df_scan['age'] = text.str.split(',').str[2].astype(int)
+# Output:
+# first_name  last_name  age
+# John        Doe        25
+# Alice       Smith      30
+
+# --------------------------------------------
+# 3. PROC TRANSPOSE in Python
+# --------------------------------------------
+df_trans = pd.DataFrame({'id':[1,2],'score':[90,95],'grade':['A','A+']})
+df_t = df_trans.melt(id_vars=['id'], var_name='variable', value_name='value')
+# Output:
+# id  variable  value
+# 1   score     90
+# 1   grade     A
+# 2   score     95
+# 2   grade     A+
+
+# --------------------------------------------
+# 4. Identify and remove unique/duplicate values
+# --------------------------------------------
+df_dup = pd.DataFrame({'col':[1,2,2,3,4,4,4]})
+# Duplicate values
+dupes = df_dup[df_dup.duplicated('col', keep=False)]
+# Unique values
+uniques = df_dup[df_dup.duplicated('col', keep=False)==False]
+# Remove duplicates
+df_no_dup = df_dup.drop_duplicates()
+# Output:
+# dupes -> 2,2,4,4,4 ; uniques -> 1,3 ; df_no_dup -> 1,2,3,4
+
+# --------------------------------------------
+# 5. PROC SORT NODUP, NODUPKEY, NONUNIQUEKEY in Python
+# --------------------------------------------
+df_sort = pd.DataFrame({'id':[3,1,2,2,1],'val':[100,200,300,300,400]})
+# Sort ascending
+df_sort_sorted = df_sort.sort_values(by=['id','val'])
+# NODUP -> remove duplicate rows
+df_sort_nodup = df_sort_sorted.drop_duplicates()
+# NODUPKEY -> remove duplicate on 'id'
+df_sort_nodupkey = df_sort_sorted.drop_duplicates(subset='id')
+# Output check with comments
+
+# --------------------------------------------
+# 6. Only character variables
+# --------------------------------------------
+df_char = pd.DataFrame({'name':['A','B'],'age':[20,25]})
+df_char_only = df_char.select_dtypes(include='object')
+# Output: only 'name' column
+
+# --------------------------------------------
+# 7. Descending sort
+# --------------------------------------------
+df_desc = df_sort.sort_values(by='val', ascending=False)
+# Output: val descending
+
+# --------------------------------------------
+# 8. NUM to CHAR and CHAR to NUM
+# --------------------------------------------
+df_convert = pd.DataFrame({'num':[10,20],'char':['5','15']})
+df_convert['num_to_char'] = df_convert['num'].astype(str)
+df_convert['char_to_num'] = df_convert['char'].astype(int)
+# Output: num_to_char=['10','20']; char_to_num=[5,15]
+
+# --------------------------------------------
+# 9. Pick first 3 and last 3 columns
+# --------------------------------------------
+df_cols = pd.DataFrame(np.arange(1,16).reshape(5,3), columns=['A','B','C'])
+# Assuming more columns for demonstration
+df_cols[['A','B','C']]  # first 3
+df_cols[df_cols.columns[-3:]]  # last 3
+
+# --------------------------------------------
+# 10. Substr equivalent
+# --------------------------------------------
+df_sub = pd.DataFrame({'name':['John','Alice']})
+df_sub['first2'] = df_sub['name'].str[:2]  # first 2 chars
+# Output: ['Jo','Al']
+
+# --------------------------------------------
+# 11. Ceil and Floor
+# --------------------------------------------
+numbers = pd.Series([1.2,2.8,3.5])
+ceil_vals = numbers.apply(ceil)   # [2,3,4]
+floor_vals = numbers.apply(floor) # [1,2,3]
+
+# --------------------------------------------
+# 12. Append dataframes
+# --------------------------------------------
+df1 = pd.DataFrame({'A':[1,2]})
+df2 = pd.DataFrame({'A':[3,4]})
+df_append = pd.concat([df1,df2], ignore_index=True)
+# Output: [1,2,3,4]
+
+# --------------------------------------------
+# 13. Missing value treatment
+# --------------------------------------------
+df_miss = pd.DataFrame({'num':[1,np.nan,3],'char':['a',None,'c']})
+# Numeric missing -> fill with 0
+df_miss['num'].fillna(0, inplace=True)
+# Character missing -> fill with 'Unknown'
+df_miss['char'].fillna('Unknown', inplace=True)
+# Output: num=[1,0,3]; char=['a','Unknown','c']
+
+# --------------------------------------------
+# 14. PROC FREQ equivalent
+# --------------------------------------------
+df_freq = pd.DataFrame({'gender':['M','F','M','M',None]})
+freq_table = df_freq['gender'].value_counts(dropna=False)
+# Output:
+# M    3
+# F    1
+# NaN  1
+
+# --------------------------------------------
+# 15. CALL SYMPUTX equivalent
+# --------------------------------------------
+# SAS me macro variable assign karte the
+# Python me variable assign kar do
+macro_var = df_freq['gender'].mode()[0]  # most frequent value
+# Output: 'M'
