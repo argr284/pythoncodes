@@ -17,7 +17,12 @@ ADDCOLUMNS(
     "Day Name", FORMAT([Date], "dddd")                           -- Day name (e.g., Monday)
 )
 
-
+----next step ---- 
+Parameter = {
+    ("D", NAMEOF('DateTable'[Day]), 0),
+    ("W", NAMEOF('DateTable'[Weekday]), 1),
+    ("M", NAMEOF('DateTable'[Short Month]), 2)
+}
 =========================
 Formated Selected Metric = 
 SWITCH(
