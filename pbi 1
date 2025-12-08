@@ -1,0 +1,30 @@
+ButtonLabel =
+VAR BaseText =
+    SWITCH(
+        [SelectedMetric],
+        "Apps", FORMAT([Applications], "#,0"),
+        "Accts", FORMAT([Accounts], "#,0"),
+        "Rate",  FORMAT([Rate], "0.00"),
+        BLANK()
+    )
+
+VAR MoMText =
+    IF(
+        [MoM%] < 0,
+        "MoM: <span style='color:red'>" & FORMAT([MoM%], "0.0%") & "</span>",
+        "MoM: " & FORMAT([MoM%], "0.0%")
+    )
+
+VAR YoYText =
+    IF(
+        [YoY%] < 0,
+        "YoY: <span style='color:red'>" & FORMAT([YoY%], "0.0%") & "</span>",
+        "YoY: " & FORMAT([YoY%], "0.0%")
+    )
+
+RETURN
+BaseText
+    & UNICHAR(10) &
+    MoMText
+    & UNICHAR(10) &
+    YoYText
